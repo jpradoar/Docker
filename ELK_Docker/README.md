@@ -3,6 +3,8 @@
 ### Logs
 Apache2:8080 ---> logs ---> Logstash:5000
 
+<hr>
+
 ### Ports
 * 8080: Apache2
 * 5000: Logstash.
@@ -10,15 +12,21 @@ Apache2:8080 ---> logs ---> Logstash:5000
 * 9300: Elasticsearch TCP transport
 * 5601: Kibana
 
-### Run docker compose
-  $ docker-compose up -d
+<hr>
 
+### Run docker compose
+<pre>
+docker-compose up -d
+</pre>
+
+<hr>
 
 ### Kibana running
 <p align="center">
   <img src="img01.png"/><br>
 </p>
 
+<hr>
 
 ### Python script (generate http request)
 <p align="center">
