@@ -1,0 +1,24 @@
+FROM debian
+MAINTAINER "Jonathan Prado <jpradoar@gmail.com>"
+
+RUN apt-get update 
+
+RUN apt-get install apache2 php5 libapache2-mod-php5 php5-mysql  mysql-server-5.5 ca-certificates-java fping java-common libasyncns0 libcurl3 libflac8 libgd3 libice6 libiksemel3 libltdl7 libnspr4 libnss3 libodbc1 libogg0 libopenipmi0 libpcsclite1 libperl5.20 libpulse0 libsctp1 libsensors4 libsm6 libsndfile1 libsnmp-base libsnmp30 libvorbis0a libvorbisenc2 libvpx1 libx11-xcb1 libxpm4 libxtst6 lksctp-tools openjdk-7-jre-headless php5-gd php5-ldap ttf-dejavu-core tzdata-java x11-common -y 
+
+RUN sed -i 's/post_max_size = 8M/post_max_size = 16M/g' /etc/php5/apache2/php.ini
+RUN sed -i 's/max_execution_time = 30/max_execution_time = 300/g' /etc/php5/apache2/php.ini
+RUN sed -i 's/max_input_time = 60/max_input_time = 300/g' /etc/php5/apache2/php.ini
+RUN sed -i 's/;always_populate_raw_post_data = -1/always_populate_raw_post_data = -1/g' /etc/php5/apache2/php.ini  
+RUN echo "date.timezone = America/Argentina/Buenos_Aires" >> /etc/php5/apache2/php.ini
+
+RUN wget http://repo.zabbix.com/zabbix/3.2/debian/pool/main/z/zabbix/zabbix-agent_3.2.0-1+jessie_amd64.deb && wget http://repo.zabbix.com/zabbix/3.2/debian/pool/main/z/zabbix/zabbix-frontend-php_3.2.0-1+jessie_all.deb && wget http://repo.zabbix.com/zabbix/3.2/debian/pool/main/z/zabbix/zabbix-get_3.2.0-1+jessie_amd64.deb && wget http://repo.zabbix.com/zabbix/3.2/debian/pool/main/z/zabbix/zabbix-java-gateway_3.2.0-1+jessie_all.deb && wget http://repo.zabbix.com/zabbix/3.2/debian/pool/main/z/zabbix/zabbix-proxy-mysql_3.2.0-1+jessie_amd64.deb && wget http://repo.zabbix.com/zabbix/3.2/debian/pool/main/z/zabbix/zabbix-sender_3.2.0-1+jessie_amd64.deb && wget http://repo.zabbix.com/zabbix/3.2/debian/pool/main/z/zabbix/zabbix-server-mysql_3.2.0-1+jessie_amd64.deb
+
+RUN dpkg --install zabbix-*.deb -y
+
+RUN cp /etc/zabbix/apache.conf /etc/apache2/sites-enabled/zabbix.conf
+
+EXPOSE 80
+
+ENTRYPOINT apache2ctl -D FOREGROUND
+
+# docker run -d -it -p 9999:80 --name zabbix-srv debian  /bin/bash

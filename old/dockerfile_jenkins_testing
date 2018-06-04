@@ -1,0 +1,14 @@
+# Create an apache instance and clone a repo with basic index
+FROM debian:latest
+MAINTAINER "Jonathan Prado <jpradoar@gmail.com>"
+
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install apache2 git -y
+RUN rm -f /var/www/html/index.html
+RUN git clone https://github.com/jpradoar/test.git /var/www/html/
+
+EXPOSE 80 
+
+CMD /usr/sbin/apache2ctl -D FOREGROUND
+
+# docker run -i -t -p 9999:80 --name=Mi_sitio_de_testing -d mi_sitio

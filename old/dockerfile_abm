@@ -1,0 +1,25 @@
+FROM debian
+MAINTAINER "Jonathan Prado <jpradoar@gmail.com>"
+
+RUN apt-get update 
+RUN apt-get install apache2 git php5 libapache2-mod-php5 php5-mysql libpthread-workqueue0 libpthread-workqueue-dev libpthread-stubs0-dev -y 
+
+RUN echo "mysql-server mysql-server/root_password password mysql_pass" | debconf-set-selections
+RUN echo "mysql-server mysql-server/root_password_again password mysql_pass" | debconf-set-selections
+
+RUN apt-get -y install mysql-server -qq
+VOLUME ["/var/lib/mysql"]
+EXPOSE 3306
+ 
+RUN sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
+
+RUN rm -f /var/www/html/index.html
+RUN git clone https://github.com/jpradoar/abm_productos.git /var/www/html/
+
+CMD mysql -u root -p mysql_pass catalogo2 < /var/www/html/catalogo2.sql
+
+EXPOSE 80 
+
+ENTRYPOINT apache2ctl -D FOREGROUND && service mysql start && /bin/bash
+
+# docker run -d -it -p 9999:80 --name abmproductosv1 debian  /bin/bash
