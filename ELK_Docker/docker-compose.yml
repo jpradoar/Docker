@@ -1,0 +1,77 @@
+version: '2'
+
+services:
+#-----------------------------------------------------------------
+  elasticsearch:
+    build:
+      context: elasticsearch/
+    container_name: 'elasticsearch'
+    restart: 'always'
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+#-----------------------------------------------------------------
+  logstash:
+    build:
+      context: logstash/
+    container_name: 'logstash'
+    restart: 'always'
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5000:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+#-----------------------------------------------------------------
+  kibana:
+    build:
+      context: kibana/
+    container_name: 'kibana'
+    restart: 'always'
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+#-----------------------------------------------------------------
+  webserver:
+    build: 
+      context: webserver/
+    container_name: 'webserver'
+    restart: 'always'
+    ports:
+      - "8080:80"
+    links: 
+      - logstash
+      - elasticsearch
+    volumes: 
+      - ./www:/var/www/html
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+      - logstash
+    logging: 
+       driver: syslog
+       options: 
+        syslog-address: "tcp://localhost:5000"
+# Uncoment this lines if you like get logs in a volume
+     # - ./logs/apache2:/var/log/apache2
+#-----------------------------------------------------------------
+networks:
+  elk:
+    driver: bridge
