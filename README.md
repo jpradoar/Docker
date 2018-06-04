@@ -2,7 +2,7 @@
   <img src="docker.jpg" height="300" width="350"/><br>
 </p>
 
-### Docker images
+### Docker Projects
 
 - [Slack Bot](/SlackBot/)
 - [ELK stack](/ELK_docker/)
@@ -11,7 +11,7 @@
 
 
 
-
+<hr>
 
 
 
