@@ -22,5 +22,5 @@ Apache2:8080 ---> logs ---> Logstash:5000
 
 ### Python script (generate http request)
 <p align="center">
-  <img src="img02.png"/><br>
+  <img src="img2.png"/><br>
 </p>
