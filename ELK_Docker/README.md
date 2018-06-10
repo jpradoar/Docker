@@ -7,7 +7,8 @@ Apache2:8080 ---> logs ---> Logstash:5000
 
 ### Ports
 * 8080: Apache2
-* 5000: Logstash.
+* 8081: phpmyadmin
+* 5000: Logstash
 * 9200: Elasticsearch
 * 9300: Elasticsearch TCP transport
 * 5601: Kibana
@@ -20,6 +21,20 @@ docker-compose up -d
 </pre>
 
 <hr>
+
+<hr>
+
+### Apache webserver
+<p align="center">
+  <img src="img000.png"/><br>
+</p>
+
+<hr>
+
+### Phpmyadmin with data
+<p align="center">
+  <img src="mysql.png"/><br>
+</p>
 
 ### Kibana running
 <p align="center">

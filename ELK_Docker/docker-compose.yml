@@ -72,6 +72,56 @@ services:
 # Uncoment this lines if you like get logs in a volume
      # - ./logs/apache2:/var/log/apache2
 #-----------------------------------------------------------------
+  mysql:
+    build: ./mysql
+    container_name: 'mysql'
+    restart: 'always'
+    ports:
+      - "3306:3306"
+    links:
+      - webserver
+      - logstash
+      - elasticsearch
+    networks:
+      - elk
+    depends_on:
+      - webserver
+      - elasticsearch
+      - logstash
+    volumes: 
+    #  - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
+    #  - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: info
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+#-----------------------------------------------------------------
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: 'phpmyadmin'
+    restart: 'always'    
+    ports:
+      - '8081:80'    
+    links:
+      - mysql
+      - webserver
+    volumes: 
+      - /sessions      
+    networks:
+      - elk
+    depends_on:
+      - webserver
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      # Uncomment this vars to access to phpmyadmin without password
+      #PMA_USER: admin  
+      #PMA_PASSWORD: admin
+      PMA_ARBITRARY: 1
+#-----------------------------------------------------------------
 networks:
   elk:
     driver: bridge
