@@ -22,8 +22,6 @@ docker-compose up -d
 
 <hr>
 
-<hr>
-
 ### Apache webserver
 <p align="center">
   <img src="img000.png"/><br>
