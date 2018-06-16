@@ -1,0 +1,69 @@
+version: '2'
+services:
+#-------------------------------------
+  prometheus:
+    build:
+      context: prometheus/
+    container_name: 'Prometheus'
+    restart: 'always'
+    ports:
+      - "9090:9090"
+    networks:
+      - moni
+#-------------------------------------
+  exporter:
+    build:
+      context: exporter/
+    container_name: 'Prometheus-Exporter'
+    restart: 'always'
+    ports:
+      - "9103:9103"
+    networks:
+      - moni
+    links:
+      - prometheus
+    depends_on:
+      - prometheus
+    environment:
+      OS_AUTH_URL: "http://0.0.0.0/identity/v3"
+      OS_PASSWORD: secret
+      OS_PROJECT_NAME: admin
+      OS_USERNAME: admin
+      OS_USER_DOMAIN_NAME: default
+      OS_REGION_NAME: RegionOne
+      TIMEOUT_SECONDS: 20
+      OS_POLLING_INTERVAL: 60
+      OS_RETRIES: 1
+      LISTEN_PORT: 9103
+      OS_CPU_OC_RATIO: 1.5
+      OS_RAM_OC_RATIO: 1
+#-------------------------------------
+  grafana:
+    image: grafana/grafana
+    container_name: 'Grafana'
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - moni
+    links:
+      - prometheus
+    depends_on:
+      - prometheus
+    volumes:
+      - ./data:/var/lib/grafana/plugins
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_GRAFANA_PLUGIN_LIST="grafana-clock-panel,jdbranham-diagram-panel,camptocamp-prometheus-alertmanager-datasource"
+     # - GF_SMTP_ENABLED=true
+     # - GF_SMTP_HOST=smtp.gmail.com:587
+     # - GF_SMTP_USER=grafana@example.com
+     # - GF_SMTP_FROM_ADDRESS=grafana@example.com
+     # - GF_SMTP_PASSWORD=mailpass
+     # - GF_USERS_ALLOW_SIGN_UP=false
+#-------------------------------------
+networks:
+  moni:
+    driver: bridge
