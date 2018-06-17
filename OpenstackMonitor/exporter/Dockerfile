@@ -1,7 +1,7 @@
-FROM ubuntu:16.04
+FROM alpine:3.7
 # Based on https://github.com/att-comdev/prometheus-openstack-exporter
 
-RUN apt-get update; apt-get install -y python-dateutil python-requests python-simplejson python-yaml python-prometheus-client; apt-get clean; apt-get autoclean; apt-get clean all; apt-get autoremove; rm -rf /var/lib/apt/lists/*
+RUN apk update; apk add -y py-dateutil py-requests py-simplejson py-yaml py-pip; pip install prometheus_client
 RUN mkdir -p /srv
 COPY ./exporter/ /srv/exporter
 EXPOSE 9103 
