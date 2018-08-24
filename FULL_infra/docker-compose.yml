@@ -1,0 +1,204 @@
+version: '2'
+services:
+#-----------------------------------------------------------------
+  elasticsearch:
+    build:
+      context: elasticsearch/
+    container_name: 'elasticsearch'
+    restart: 'always'
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - fullinfra
+#-----------------------------------------------------------------
+  logstash:
+    build:
+      context: logstash/
+    container_name: 'logstash'
+    restart: 'always'
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5000:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - fullinfra
+    depends_on:
+      - elasticsearch
+#-----------------------------------------------------------------
+  kibana:
+    build:
+      context: kibana/
+    container_name: 'kibana'
+    restart: 'always'
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5601:5601"
+    networks:
+      - fullinfra
+    depends_on:
+      - elasticsearch
+#----------------------------------------------------------------
+  grafana:
+    image: grafana/grafana
+    container_name: 'Grafana'
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - fullinfra
+    links:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./data:/var/lib/grafana/plugins
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_GRAFANA_PLUGIN_LIST="grafana-clock-panel,jdbranham-diagram-panel,camptocamp-prometheus-alertmanager-datasource"
+     # - GF_SMTP_ENABLED=true
+     # - GF_SMTP_HOST=smtp.gmail.com:587
+     # - GF_SMTP_USER=grafana@example.com
+     # - GF_SMTP_FROM_ADDRESS=grafana@example.com
+     # - GF_SMTP_PASSWORD=mailpass
+     # - GF_USERS_ALLOW_SIGN_UP=false
+#-----------------------------------------------------------------
+  webserver:
+    build: 
+      context: webserver/
+    container_name: 'webserver'
+    restart: 'always'
+    ports:
+      - "8080:80"
+    links: 
+      - logstash
+      - elasticsearch
+    volumes: 
+      - ./www:/var/www/html
+    networks:
+      - fullinfra
+    depends_on:
+      - elasticsearch
+      - logstash
+    logging: 
+       driver: syslog
+       options: 
+        syslog-address: "tcp://localhost:5000"
+# Uncoment this lines if you like get logs in a volume
+     # - ./logs/apache2:/var/log/apache2
+#-----------------------------------------------------------------
+  mariadb:
+    build: ./mariadb
+    container_name: 'mariadb'
+    restart: 'always'
+    ports:
+      - "3306:3306"
+    links:
+      - webserver
+      - logstash
+      - elasticsearch
+    networks:
+      - fullinfra
+    depends_on:
+      - webserver
+      - elasticsearch
+      - logstash
+    volumes: 
+    #  - ${MYSQL_DATA_DIR-./data/mariadb}:/var/lib/mariadb
+    #  - ${MYSQL_LOG_DIR-./logs/mariadb}:/var/log/mariadb
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: info
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+#-----------------------------------------------------------------
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: 'phpmyadmin'
+    restart: 'always'    
+    ports:
+      - '8081:80'    
+    links:
+      - mariadb
+      - webserver
+    volumes: 
+      - /sessions      
+    networks:
+      - fullinfra
+    depends_on:
+      - webserver
+      - mariadb
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      # comment the next 2 vars to access to disable phpmyadmin login without password
+      PMA_USER: admin  
+      PMA_PASSWORD: admin
+      PMA_ARBITRARY: 1
+#-----------------------------------------------------------------
+  scope:
+    image: weaveworks/scope:latest
+    container_name: 'weavescope'
+    network_mode: "host"
+    pid: "host"
+    privileged: true
+    labels:
+      - "works.weave.role=system"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+    command:
+      - "--probe.docker=true"
+#-----------------------------------------------------------------
+  jenkins:
+    image: 'jenkins/jenkins:lts'
+    container_name: 'jenkins'
+    ports:
+      - '8088:8080'
+      - '443:8443'
+      - '50000:50000'
+    volumes:
+      - './jenkins_data:/jenkins_config'
+#-----------------------------------------------------------------
+  gitserver:
+    build:
+      context: gitserver/
+    container_name: 'gitserver'
+    restart: 'always'
+    ports:
+      - "222:22"
+      - "8888:80"
+    networks:
+      - fullinfra
+    volumes:
+      - "/gitserver/data:/var/lib/git:rw"
+#-----------------------------------------------------------------
+#  ansible:
+#    build:
+#      context: ansible/
+#    container_name: 'ansible'
+#    restart: 'always'
+#    links:
+#      - mariadb
+#      - webserver
+#      - gitserver
+#    ports:
+#      - "1022:22"
+#    networks:
+#      - fullinfra
+#    volumes:
+#      - "/ansible:/srv:rw"
+#-----------------------------------------------------------------
+networks:
+  fullinfra:
+    driver: bridge
