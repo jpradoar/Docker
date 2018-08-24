@@ -1,9 +1,9 @@
 # Docker ELK stack
 
 ### Logs
-Apache2:8080 ---> logs ---> Logstash:5000 <---> Kibana
-apache2:8080 ---> logs ---> Elasticsearch <---> Grafana
-All-containers <---> weave
+* Apache2:8080 ---> logs ---> Logstash:5000 <---> Kibana
+* apache2:8080 ---> logs ---> Elasticsearch <---> Grafana
+* All-containers <---> weave
 <hr>
 
 ### Ports
