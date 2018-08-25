@@ -1,11 +1,10 @@
 <p align="center">
   <img src="docker.jpg" height="300" width="350"/><br>
 </p>
-
 ### Docker Projects
 
+- [DevOps-Stack](/FULL_infra/)
 - [Slack Bot](/SlackBot/)
-- [ELK stack](/ELK_Docker/)
 - [Tests](/old/)
 
 
