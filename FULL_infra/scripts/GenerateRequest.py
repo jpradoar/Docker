@@ -16,7 +16,7 @@ def tiempo():
 def magic():        
         url_index = ['index.php', 'about.html', 'services.html', 'products', 'product-details.html', 'blog-home.html', 'blog-single.html', 'contact.html', 'elements', 'nodata.html', ' ',]
         ref_index = ['blog.example.com/post/01/', 'news.supernews.com/index', 'curl.com', 'blasite.com/bla/index', 'cucubird.com/post/1']
-        agent = ['Mozilla/5.0', 'Chrome/4.1', 'Opera', 'Safari/1.2', 'Android 6.0.1','Mobile; rv:61.0']
+        agent = ['Mozilla/5.0', 'Chrome/4.1', 'Opera', 'Safari/1.2', 'Android_6.0.1','Mobile_rv:61.0']
         command="curl -s --referer "+(random.choice(ref_index))+"  -A "+(random.choice(agent))+" http://"+RequestIP+"/"+(random.choice(url_index))+" >/dev/null"
         output="http://"+RequestIP+"/"+(random.choice(url_index))
         os.system(command)

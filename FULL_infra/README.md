@@ -29,33 +29,47 @@ docker-compose up -d
 
 ### Apache webserver
 <p align="center">
-  <img src="img000.png"/><br>
+  <img src="images/img000.png"/><br>
 </p>
 
 <hr>
 
 ### Phpmyadmin with data
 <p align="center">
-  <img src=mariadb.png"/><br>
+  <img src=images/mariadb.png"/><br>
 </p>
 
 ### Kibana running
 <p align="center">
-  <img src="img01.png"/><br>
+  <img src="images/img01.png"/><br>
 </p>
 
 <hr>
 
 ### Grafana running
 <p align="center">
-  <img src="grafana.png"/><br>
+  <img src="images/grafana.png"/><br>
 </p>
 
 <hr>
 
 ### Weave running
 <p align="center">
-  <img src="weave.png"/><br>
+  <img src="images/weave.png"/><br>
+</p>
+
+<hr>
+
+### Jenkins running
+<p align="center">
+  <img src="images/jenkins.png"/><br>
+</p>
+
+<hr>
+
+### Gitserver running
+<p align="center">
+  <img src="images/gitweb.png"/><br>
 </p>
 
 <hr>
@@ -63,7 +77,7 @@ docker-compose up -d
 
 ### Python script (generate http request)
 <p align="center">
-  <img src="img2.png"/><br>
+  <img src="images/img2.png"/><br>
 </p>
 
 
