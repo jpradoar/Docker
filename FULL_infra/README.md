@@ -1,4 +1,4 @@
-# Docker ELK stack
+# Docker devops stack
 
 ### Logs
 * Apache2:8080 ---> logs ---> Logstash:5000 <---> Kibana
