@@ -3,10 +3,10 @@
 ### Dollar tendency
 
 <p align="center">
-  <img src="images/gitweb.png"/><br>
+  <img src="img.png"/><br>
 </p>
 
 ### Logic
 <pre>
-	Script ---> Elasticsearch <--- Grafana
+	Script(ubuntu) ---> Elasticsearch <--- Grafana
 </pre>
