@@ -3,6 +3,8 @@ services:
 #-----------------------------------------------------------------
   nginx:
     image: nginx
+    container_name: 'nginx'
+    restart: 'always'
     ports:
       - 9200:9200
       - 5601:5601
