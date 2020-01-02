@@ -1,0 +1,69 @@
+version: '2'
+services:
+#-----------------------------------------------------------------
+  nginx:
+    image: nginx
+    ports:
+      - 9200:9200
+      - 5601:5601
+#      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/htpasswd:/etc/nginx/.htpasswd:ro
+    networks:
+      - elk
+#-----------------------------------------------------------------
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.4
+    container_name: 'elasticsearch'
+    restart: 'always'
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data:rw
+    ports:
+      - "9209:9200"
+    networks:
+      - elk
+    depends_on:
+      - nginx
+    environment:
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      cluster.name: "elastic"
+      network.host: 0.0.0.0
+      discovery.zen.minimum_master_nodes: 1
+      discovery.type: single-node
+#-----------------------------------------------------------------
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:6.2.4
+    container_name: 'kibana'
+    restart: 'always'
+    ports:
+      - "5609:5601"
+    networks:
+      - elk
+    depends_on:
+      - nginx
+      - elasticsearch
+    environment:
+      server.name: kibana
+      server.host: "0"
+      elasticsearch.url: http://elasticsearch:9209/
+#-----------------------------------------------------------------
+  scope:
+    image: weaveworks/scope:1.12.0
+    network_mode: "host"
+    pid: "host"
+    privileged: true
+    labels:
+      - "works.weave.role=system"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+    command:
+      - "--probe.docker=true"
+    depends_on:
+      - nginx
+      - elasticsearch
+      - kibana      
+#-----------------------------------------------------------------
+networks:
+  elk:
+    driver: bridge
