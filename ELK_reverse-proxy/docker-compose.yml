@@ -49,7 +49,6 @@ services:
       server.name: kibana
       server.host: "0"
       elasticsearch.url: http://elasticsearch:9209/
-
 #-----------------------------------------------------------------
   scope:
     image: weaveworks/scope:1.12.0
