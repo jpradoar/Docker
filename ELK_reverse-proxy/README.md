@@ -59,5 +59,5 @@ if (hash.length) {
 
 
 ### Stack
-<div align="center"<img src="stack.png" /> </div>
+<div align="center"> <img src="stack.png" /> </div>
 This is result of:  watch -n1 "curl -su test:test 127.0.0.1:5601 && curl -su test:test 127.0.0.1:9200"
