@@ -1,6 +1,12 @@
 # ELK + nginx proxy_pass with Docker 
 
 
+### Remember replace with your ip on nginx/nginx.conf
+<pre>
+proxy_pass      http://your_ip_here:9209/;
+proxy_pass      http://you_ip_here:5609/;
+</pre>
+
 ### Test without login on proxy_passs
 <pre>
 jprado@T-rex:$ curl  127.0.0.1:9200
