@@ -1,14 +1,19 @@
-# Looking Glass API
+# Simpe Python API
 
 
 ### Build Dockerfile
-	docker build --no-cache -t lgapi .
+	docker build --no-cache -t pyApi .
 
 ### Run api
-	docker run -it -p 8088:8088 lgapi
+	docker run -it -p 8088:8088 pyApi
 
 
 ### how to use and test
+	curl -H 'Content-Type: application/json' -X POST -d '{"data": "8.8.8.8" }'  127.0.0.1:8088/ping
+<pre>
+Login fail: User and/or Password are wrong.
+</pre>
+
 	curl -u admin:admin -H 'Content-Type: application/json' -X POST -d '{"data": "8.8.4.4" }'  127.0.0.1:8088/ping
 <pre>
 PING 8.8.4.4 (8.8.4.4): 56 data bytes
