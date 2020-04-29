@@ -32,6 +32,15 @@ def requires_auth(f):
     return decorated
 
 
+# This function will be used to write data on DB for statistics
+def show_test():
+        for a in request.args:
+            test = a
+        for key in request.args:
+            destino = request.args.get(key)
+        print(test+":"+destino)
+        # Write data in MariaDB
+
 # ROUTES-----------------------------------------------------------------------------------------------------
 @app.route('/info', methods=['GET'])
 def get_help():
@@ -43,16 +52,22 @@ def get_help():
 def run_command():
     if 'ping' in request.args:
         response = subprocess.check_output(['ping', '-c', '3', socket.gethostbyname(str(request.args['ping']) ) ],stderr=subprocess.STDOUT, universal_newlines=True)
+        show_test()
     if 'nmap' in request.args:
         response = subprocess.check_output(['nmap', socket.gethostbyname(str(request.args['nmap']) ) ],stderr=subprocess.STDOUT, universal_newlines=True)
+        show_test()
     if 'traceroute' in request.args:
         response = subprocess.check_output(['traceroute', socket.gethostbyname(str(request.args['traceroute']) ) ],stderr=subprocess.STDOUT, universal_newlines=True)
+        show_test()
     if 'nslookup' in request.args:
         response = subprocess.check_output(['nslookup', socket.gethostbyname(str(request.args['nslookup']) ) ],stderr=subprocess.STDOUT, universal_newlines=True)
+        show_test()
     if 'host' in request.args:
         response = subprocess.check_output(['host', socket.gethostbyname(str(request.args['host']) ) ],stderr=subprocess.STDOUT, universal_newlines=True)
+        show_test()
     if 'dig' in request.args:
         response = subprocess.check_output(['dig', socket.gethostbyname(str(request.args['dig']) ) ],stderr=subprocess.STDOUT, universal_newlines=True)
+        show_test()
     return response
 
 
