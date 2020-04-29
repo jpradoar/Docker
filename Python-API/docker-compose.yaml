@@ -1,0 +1,38 @@
+version: '2'
+services:
+#-----------------------------------------------------------------
+  lookingglass:
+    build:
+      context: lookingglass/
+    container_name: 'lookingglass'
+    restart: 'always'
+    ports:
+            - "8088:8088"
+    networks:
+      - pythonAPI
+#-----------------------------------------------------------------
+#  mariadb:
+#    image: mariadb:latest
+#    container_name: 'mariadb'
+#    restart: 'always'
+#    ports:
+#      - "3306:3306"
+#    links:
+#      - lookingglass
+#    networks:
+#      - pythonAPI
+#    depends_on:
+#      - lookingglass
+#    volumes: 
+#    #  - ${MYSQL_DATA_DIR-./data/mariadb}:/var/lib/mariadb
+#    #  - ${MYSQL_LOG_DIR-./logs/mariadb}:/var/log/mariadb
+#    #  - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: password
+#      MYSQL_DATABASE: info
+#      MYSQL_USER: admin
+#      MYSQL_PASSWORD: admin
+#-----------------------------------------------------------------
+networks:
+  pythonAPI:
+    driver: bridge      

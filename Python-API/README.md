@@ -1,11 +1,8 @@
 # Simpe Python API
 
 
-### Build Dockerfile
-	docker build --no-cache -t pyapi .
-
 ### Run api
-	docker run -it -p 8088:8088 pyapi
+	docker-compose up -d 
 
 
 ### Test ping IP without login
@@ -35,7 +32,7 @@
 		rtt min/avg/max/mdev = 17.367/18.498/20.080/1.152 ms
 
 
-### Test ping url with command (rm -rf /)   ;)
+### Test ping url with BASIC command (rm -rf /) 
 	curl -u admin:admin -H 'Content-Type: application/json' -X GET  127.0.0.1:8088/?ping='www.google.com/\ rm \-rf \.'
 		Error response
 		Error code: 400

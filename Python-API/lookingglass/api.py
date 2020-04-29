@@ -2,8 +2,7 @@
 from flask import Flask, jsonify, request, Response
 from functools import wraps
 import os
-# import httplib # (for python2)
-import http.client # (for python3)
+import http.client
 import logging
 import socket
 import subprocess
@@ -16,6 +15,7 @@ app = Flask(__name__)
 def check_auth(username, password):
     # Check if username and password are admin:admin. 
     # Here you can use a function to check this data on remote database
+    # PENDING: validate with mariadb
     return username == 'admin' and password == 'admin'
 
 def not_authenticate():
@@ -34,13 +34,8 @@ def requires_auth(f):
 
 # ROUTES-----------------------------------------------------------------------------------------------------
 @app.route('/info', methods=['GET'])
-def hello():
-    return "- Host performs DNS lookups, converting domain names to IP addresses and vice versa. \n- Ping is usually used as a simple way to verify that a computer can communicate over the network with another computer or network device.\n- Traceroute is a command which can show you the path a packet of information takes from your computer to one you specify. It will list all the routers it passes through until it reaches its destination, or fails to and is discarded.\n- Nmap is used for exploring networks, perform security scans, network audit and finding open ports on remote machine.\n- Dig is a too used for querying Domain Name System (DNS) name servers. It is useful for verifying and troubleshooting DNS problems and also to perform DNS lookups and displays the answers that are returned from the name server that were queried.\n\nWhen you have selected the type of query and node, and filled the additional parameter field, press Run."
-
-#-----------------------------------------------------------------------
-@app.route('/help', methods=['GET'])
 def get_help():
-    return "Options:\n\n/ping,\n/nmap,\n/traceroute,\n/nslookup,\n/host,\n/dig\n"
+    return "Simple API test.\n\nOptions:\n\n/ping,\n/nmap,\n/traceroute,\n/nslookup,\n/host,\n/dig\n\n curl url:8088/?ping=8.8.8.8\n curl url:8088/?ping=www.google.com"
 
 #-----------------------------------------------------------------------
 @app.route('/', methods=['GET'])
