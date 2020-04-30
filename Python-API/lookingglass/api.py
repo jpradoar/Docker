@@ -10,6 +10,12 @@ import json
 
 app = Flask(__name__)
 
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(levelname)-8s %(message)s',
+                    datefmt='%a, %d %b %Y %H:%M:%S',
+                    filename='/tmp/datadogapi.log',
+                    filemode='w')
+
 # FUNCTIONS ---------------------------------------------------------------------------------------------
 
 def check_auth(username, password):
