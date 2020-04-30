@@ -7,14 +7,10 @@ import logging
 import socket
 import subprocess
 import json
+from logging.config import dictConfig
 
 app = Flask(__name__)
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s %(levelname)-8s %(message)s',
-                    datefmt='%a, %d %b %Y %H:%M:%S',
-                    filename='/tmp/datadogapi.log',
-                    filemode='w')
 
 # FUNCTIONS ---------------------------------------------------------------------------------------------
 
@@ -26,7 +22,7 @@ def check_auth(username, password):
 
 def not_authenticate():
     # If user or pass are wrong, send an error message
-    return Response('Login fail: User and/or Password are wrong.  Chupala gato!\n', 401,  {'WWW-Authenticate': 'Basic realm="Login Required"'})
+    return Response('Login fail: User and/or Password are wrong.\n', 401,  {'WWW-Authenticate': 'Basic realm="Login Required"'})
 
 def requires_auth(f):
     @wraps(f)
@@ -77,8 +73,36 @@ def run_command():
     return response
 
 
+#---LOGS --------------------------------------------------------------------------------------------------------
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://sys.stdout',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
+
+# OPTIONAL LOG TO FILE
+#logging.basicConfig(level=logging.INFO,
+#                    format='%(asctime)s %(levelname)-8s %(message)s',
+#                    datefmt='%a, %d %b %Y %H:%M:%S',
+#                    filename='/tmp/datadogapi.log',
+#                    filemode='w')
+
 #-----------------------------------------------------------------------------------------------------------
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8088, debug=False) # Open a webserver on port 8088
+    handler = logging.StreamHandler(sys.stdout)
+    app.logger.addHandler(handler)
 
 
