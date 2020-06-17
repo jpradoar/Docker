@@ -1,0 +1,95 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - alertmanager:9093
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+    - targets: ['localhost:9090']
+
+#-----IMPORTANTE LEEME------------------------------------------------------------
+# Los target_label sirven para renombrar los tags que vienen de aws
+# los source_labels son los tags reales de aws
+# Todos estos tags son SUPER utiles para hacer querys de filtrado de datos
+# Se asume que todos los recursos (instancias EC2, pods, etc) tienen
+# publicado el puerto 9100 para ser consumido por prometheus_server
+# No olvidar colocar un SG que permita trafico IN de origen prometheus_server
+#--------------------------------------------------------------------------------
+
+  - job_name: 'AWS_DEV'
+    ec2_sd_configs:
+    - region: 'us-east-1'
+      role_arn: arn:aws:iam::0123456789:role/ReadOnlyUser
+      port: 9100
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: .*
+        action: keep
+      - source_labels: [__meta_ec2_public_dns_name]
+        target_label: 'public_dns_name'
+      - source_labels: [__meta_ec2_tag_Name]
+        target_label: 'name'
+      - source_labels: [__meta_ec2_instance_tag_Environment]
+        target_label: 'environment'
+      - source_labels: [__meta_ec2_availability_zone]
+        target_label: 'az'
+      - source_labels: [__meta_ec2_instance_type]
+        target_label: 'instance_type'
+      - source_labels: [__meta_ec2_instance_state]
+        target_label: 'instance_state'
+      - source_labels: [__meta_ec2_public_ip]
+        target_label: 'public_ip'
+      - source_labels: [__meta_ec2_vpc_id]        
+        target_label: 'vpc_id'
+
+
+  - job_name: 'AWS_PROD'
+    ec2_sd_configs:
+    - region: 'us-east-1'
+      role_arn: arn:aws:iam::0123456789:role/ReadOnlyUser
+      port: 9100
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Name]
+        regex: .*
+        action: keep
+      - source_labels: [ __meta_ec2_availability_zone ]
+        target_label: 'az'
+      - source_labels: [ __meta_ec2_instance_id ]
+        target_label: 'instance_id'
+      - source_labels: [ __meta_ec2_instance_state ]
+        target_label: 'instance_state'
+      - source_labels: [ __meta_ec2_instance_type ]
+        target_label: 'instance_type'
+      - source_labels: [ __meta_ec2_primary_subnet_id ]
+        target_label: 'primary_subnet_id'
+      - source_labels: [ __meta_ec2_private_dns_name ]
+        target_label: 'private_dns_name'
+      - source_labels: [ __meta_ec2_private_ip ]
+        target_label: 'private_ip'
+      - source_labels: [ __meta_ec2_subnet_id ]
+        target_label: 'subnet_id'
+      - source_labels: [ __meta_ec2_tag_Name ]
+        target_label: 'name'
+      - source_labels: [ __meta_ec2_tag_aws_autoscaling_groupName ]
+        target_label: 'aws_autoscaling_groupName'
+      - source_labels: [ __meta_ec2_tag_client ]
+        target_label: 'client'
+      - source_labels: [ __meta_ec2_tag_environment ]
+        target_label: 'environment'
+      - source_labels: [ __meta_ec2_vpc_id ]
+        target_label: 'vpc_id'
+
+
+
+

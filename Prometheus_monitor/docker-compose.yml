@@ -1,0 +1,38 @@
+version: '2'
+services:
+#----------------------------------------------------------------
+  grafana:
+    image: grafana/grafana
+    container_name: 'Grafana'
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - fullinfra
+    volumes:
+      - ./data:/var/lib/grafana/plugins
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+#-----------------------------------------------------------------
+  prometheus:
+    build: 
+      context: prometheus/
+    container_name: 'prometheus'
+    restart: 'always'
+    ports:
+      - "9090" # Dejo uno solo por que no quiero que sea publico el puerto
+    links: 
+      - grafana
+    depends_on:
+      - grafana
+    networks:
+      - fullinfra
+    volumes:
+      - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml:ro      
+      # - ./prometheus/data:/etc/prometheus/data # to save data
+#-----------------------------------------------------------------
+networks:
+  fullinfra:
+    driver: bridge

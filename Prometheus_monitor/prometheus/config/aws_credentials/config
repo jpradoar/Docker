@@ -1,0 +1,12 @@
+[profile AWS-PROD]
+role_arn =  arn:aws:iam::0123456789:role/ReadOnlyUser
+source_profile = default
+region = us-east-1
+
+[profile AWS-DEV]
+role_arn =  arn:aws:iam::0123456789:role/ReadOnlyUser
+source_profile = default
+region = us-east-1
+
+# Acá hay que estar 100% seguro que el arn tiene solo ReadOnly 
+# y tiene SOLO los permisos necesarios para poder hacer un describe instances y NADA MAS!!!!
