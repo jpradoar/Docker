@@ -17,9 +17,10 @@ Prometheus Server config file:
 
 
 ### Versions
+<pre>
 Grafana: 	7.0.3
 Prometheus: 	2.19.0.linux-amd64
-
+</pre>
 
 ### Images
 
