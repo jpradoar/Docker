@@ -1,12 +1,14 @@
 FROM ubuntu:18.04
 
-# Pending....
+WORKDIR /root
 
+COPY ./config/server/* /root/
+COPY ./config/aws_credentials/* /root/.aws/
 
+RUN apt-get update; apt-get install -y awscli \
+&& apt-get autoclean \
+&& apt-get autoremove --purge \
+&& rm -rf /var/lib/apt/lists/* 
 
-# install all packages and awscli
-# copy prometheus binary
-# copy prometheus.yml
-# copy aws_credentials
+ENTRYPOINT [ "./prometheus" ]
 
-# entrypoint ["./prometheus"]
