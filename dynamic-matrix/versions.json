@@ -1,0 +1,16 @@
+{
+    "versions": {
+    	"environment": "dev",
+        "app":{
+		    "component01": "1.0.0",
+		    "component02": "1.1.0",
+		    "component03": "0.12",
+		    "component04": "1.53"
+	        },
+	    "aws": {
+	        "kubernetes": "1.18",
+	        "rds": "5.7"
+    	}
+    }
+}
+

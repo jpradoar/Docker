@@ -1,0 +1,60 @@
+version: '2'
+services:
+#-----------------------------------------------------------------
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
+    container_name: 'elasticsearch'
+    restart: 'always'
+    ports:
+      - "9200"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      network.host: "0.0.0.0"
+      cluster.name: "elasticsearch"
+      discovery.zen.minimum_master_nodes: 1
+      discovery.type: single-node
+      index_name: "versions"
+    networks:
+      - dynamicmatrix
+#-----------------------------------------------------------------
+  scripts:
+    build:
+      context: scripts/
+    container_name: 'scripts'
+    restart: 'always'
+    links:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    networks:
+       - dynamicmatrix
+#-----------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:7.3.10
+    container_name: 'Grafana'
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - dynamicmatrix
+    links:
+      - elasticsearch
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./data/:/var/lib/grafana/plugins/
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_GRAFANA_PLUGIN_LIST="grafana-clock-panel,jdbranham-diagram-panel,camptocamp-prometheus-alertmanager-datasource"
+     # - GF_SMTP_ENABLED=true
+     # - GF_SMTP_HOST=smtp.gmail.com:587
+     # - GF_SMTP_USER=grafana@example.com
+     # - GF_SMTP_FROM_ADDRESS=grafana@example.com
+     # - GF_SMTP_PASSWORD=mailpass
+     # - GF_USERS_ALLOW_SIGN_UP=false
+#-----------------------------------------------------------------
+networks:
+  dynamicmatrix:
+    driver: bridge
